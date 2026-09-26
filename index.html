@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>CGPA Calculator</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,600;8..60,700&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#F5F6F4; --ink:#151B24; --ink-soft:#4B5563; --rule:#D8DBD6;
+    --gold:#9C7A22; --gold-soft:#EFE6CC; --panel:#FFFFFF; --danger:#8A3B2B;
+    box-sizing:border-box; padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --paper:#12161C; --ink:#EDEEEA; --ink-soft:#9CA3AF; --rule:#2A3038;
+      --gold:#D8B65B; --gold-soft:#2A2313; --panel:#181D25; --danger:#E28A76;
+    }
+  }
+  :root[data-theme="dark"]{
+    --paper:#12161C; --ink:#EDEEEA; --ink-soft:#9CA3AF; --rule:#2A3038;
+    --gold:#D8B65B; --gold-soft:#2A2313; --panel:#181D25; --danger:#E28A76;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-padding-top:env(safe-area-inset-top,0px); height:100%;}
+  body{
+    margin:0; min-height:100%; background:var(--paper); color:var(--ink);
+    font-family:"IBM Plex Sans", -apple-system, sans-serif; line-height:1.5;
+    -webkit-font-smoothing:antialiased;
+  }
+  h1,h2{font-family:"Source Serif 4", Georgia, serif; margin:0; font-weight:600;}
+  .wrap{max-width:760px; margin:0 auto; padding:2.5rem 1.25rem 4rem;}
+  header{display:flex; justify-content:space-between; align-items:flex-start; gap:1rem; margin-bottom:1.75rem;}
+  header h1{font-size:1.7rem; letter-spacing:-0.01em;}
+  header p{margin:.35rem 0 0; color:var(--ink-soft); font-size:.92rem; max-width:34ch;}
+
+  .medallion{
+    flex:0 0 auto; width:112px; height:112px; border-radius:50%;
+    border:2px solid var(--gold); background:var(--gold-soft);
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    text-align:center;
+  }
+  .medallion .num{font-family:"Source Serif 4", serif; font-size:1.9rem; font-weight:700; color:var(--gold); line-height:1;}
+  .medallion .lbl{font-size:.62rem; color:var(--ink-soft); margin-top:.2rem;}
+
+  .semester{
+    background:var(--panel); border:1px solid var(--rule); border-radius:6px;
+    padding:1.1rem 1.1rem 1.3rem; margin-bottom:1.1rem;
+  }
+  .sem-head{display:flex; justify-content:space-between; align-items:center; gap:.75rem; margin-bottom:.85rem;}
+  .sem-head input[type=text]{
+    font-family:"Source Serif 4", serif; font-size:1.05rem; font-weight:600; color:var(--ink);
+    border:none; background:transparent; padding:.15rem 0; width:60%; border-bottom:1px solid transparent;
+  }
+  .sem-head input[type=text]:focus{outline:none; border-bottom:1px solid var(--rule);}
+  .sem-gpa{font-size:.85rem; color:var(--ink-soft); white-space:nowrap;}
+  .sem-gpa b{color:var(--ink); font-family:"Source Serif 4", serif; font-size:1rem;}
+
+  table{width:100%; border-collapse:collapse; font-size:.9rem;}
+  thead th{
+    text-align:left; font-weight:500; color:var(--ink-soft); font-size:.75rem;
+    padding:0 .4rem .4rem; border-bottom:1px solid var(--rule);
+  }
+  tbody td{padding:.4rem; border-bottom:1px solid var(--rule); vertical-align:middle;}
+  tbody tr:last-child td{border-bottom:none;}
+  td input[type=text]{width:100%; border:none; background:transparent; color:var(--ink); font-size:.9rem; padding:.3rem;}
+  td input[type=number]{width:4.2rem; border:1px solid var(--rule); border-radius:4px; background:transparent; color:var(--ink); font-size:.9rem; padding:.3rem;}
+  td select{width:100%; border:1px solid var(--rule); border-radius:4px; background:var(--panel); color:var(--ink); font-size:.9rem; padding:.3rem;}
+  td input:focus, td select:focus{outline:2px solid var(--gold); outline-offset:1px;}
+  .rm{background:none; border:none; color:var(--ink-soft); cursor:pointer; font-size:1rem; padding:.2rem .4rem;}
+  .rm:hover{color:var(--danger);}
+  .rm:focus-visible{outline:2px solid var(--gold);}
+
+  .row-actions{margin-top:.7rem; display:flex; justify-content:space-between; align-items:center;}
+  .add-course, .add-semester, .reset{
+    font-family:inherit; font-size:.85rem; color:var(--ink); background:none;
+    border:1px solid var(--rule); border-radius:5px; padding:.4rem .75rem; cursor:pointer;
+  }
+  .add-course:hover, .add-semester:hover{border-color:var(--gold); color:var(--gold);}
+  .rm-sem{font-size:.78rem; color:var(--ink-soft); background:none; border:none; cursor:pointer;}
+  .rm-sem:hover{color:var(--danger);}
+  .rm-sem:focus-visible, .add-course:focus-visible, .add-semester:focus-visible, .reset:focus-visible{outline:2px solid var(--gold); outline-offset:1px;}
+
+  footer{margin-top:2rem; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:.75rem;}
+  .reset{color:var(--ink-soft);}
+  .scale-note{font-size:.78rem; color:var(--ink-soft); max-width:40ch;}
+
+  @media (max-width:520px){
+    header{flex-direction:column;}
+    .medallion{align-self:flex-start;}
+    thead th:nth-child(2), td:nth-child(2){display:none;}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div>
+      <h1>CGPA Calculator</h1>
+      <p>Add each semester's courses with their credit hours and grade. Your GPA and cumulative CGPA update as you type.</p>
+    </div>
+    <div class="medallion">
+      <div class="num" id="cgpaOut">0.00</div>
+      <div class="lbl">CGPA</div>
+    </div>
+  </header>
+
+  <div id="semesters"></div>
+
+  <button class="add-semester" id="addSem" type="button">+ Add semester</button>
+
+  <footer>
+    <span class="scale-note">4.0 scale — A = 4.00 down to F = 0.00, with standard +/- steps.</span>
+    <button class="reset" id="resetAll" type="button">Reset all</button>
+  </footer>
+</div>
+
+<script>
+const GRADES = [
+  ["A","4.00"],["A-","3.67"],["B+","3.33"],["B","3.00"],["B-","2.67"],
+  ["C+","2.33"],["C","2.00"],["C-","1.67"],["D+","1.33"],["D","1.00"],["F","0.00"]
+];
+
+let state = [ newSemester(1) ];
+
+function newSemester(n){
+  return { name: "Semester " + n, courses: [ newCourse() ] };
+}
+function newCourse(){
+  return { name:"", hours:3, grade:"A" };
+}
+
+function gradeOptions(selected){
+  return GRADES.map(([g,p]) => `<option value="${g}" ${g===selected?"selected":""}>${g} (${p})</option>`).join("");
+}
+
+function semGPA(sem){
+  let qp=0, hrs=0;
+  sem.courses.forEach(c=>{
+    const h = parseFloat(c.hours)||0;
+    const p = parseFloat(GRADES.find(g=>g[0]===c.grade)[1]);
+    qp += h*p; hrs += h;
+  });
+  return hrs ? qp/hrs : 0;
+}
+
+function cgpa(){
+  let qp=0, hrs=0;
+  state.forEach(sem=>{
+    sem.courses.forEach(c=>{
+      const h = parseFloat(c.hours)||0;
+      const p = parseFloat(GRADES.find(g=>g[0]===c.grade)[1]);
+      qp += h*p; hrs += h;
+    });
+  });
+  return hrs ? qp/hrs : 0;
+}
+
+function render(){
+  const root = document.getElementById("semesters");
+  root.innerHTML = state.map((sem, si) => `
+    <div class="semester" data-si="${si}">
+      <div class="sem-head">
+        <input type="text" class="sem-name" value="${sem.name}" aria-label="Semester name">
+        <span class="sem-gpa">GPA <b>${semGPA(sem).toFixed(2)}</b>
+          ${state.length>1 ? `<button class="rm-sem" data-si="${si}" type="button">remove</button>` : ""}
+        </span>
+      </div>
+      <table>
+        <thead><tr><th style="width:42%">Course</th><th>Credit hrs</th><th>Grade</th><th></th></tr></thead>
+        <tbody>
+          ${sem.courses.map((c, ci) => `
+            <tr data-si="${si}" data-ci="${ci}">
+              <td><input type="text" class="c-name" value="${c.name}" placeholder="e.g. Calculus I"></td>
+              <td><input type="number" class="c-hours" min="0" step="0.5" value="${c.hours}"></td>
+              <td><select class="c-grade">${gradeOptions(c.grade)}</select></td>
+              <td>${sem.courses.length>1 ? `<button class="rm" type="button" aria-label="Remove course">&times;</button>` : ""}</td>
+            </tr>
+          `).join("")}
+        </tbody>
+      </table>
+      <div class="row-actions">
+        <button class="add-course" data-si="${si}" type="button">+ Add course</button>
+      </div>
+    </div>
+  `).join("");
+  document.getElementById("cgpaOut").textContent = cgpa().toFixed(2);
+  attachHandlers();
+}
+
+function attachHandlers(){
+  document.querySelectorAll(".sem-name").forEach((el,i)=>{
+    el.oninput = () => { state[i].name = el.value; };
+  });
+  document.querySelectorAll(".rm-sem").forEach(btn=>{
+    btn.onclick = () => { state.splice(+btn.dataset.si,1); render(); };
+  });
+  document.querySelectorAll(".add-course").forEach(btn=>{
+    btn.onclick = () => { state[+btn.dataset.si].courses.push(newCourse()); render(); };
+  });
+  document.querySelectorAll("tbody tr").forEach(tr=>{
+    const si = +tr.dataset.si, ci = +tr.dataset.ci;
+    const c = state[si].courses[ci];
+    tr.querySelector(".c-name").oninput = e => { c.name = e.target.value; };
+    tr.querySelector(".c-hours").oninput = e => { c.hours = e.target.value; document.getElementById("cgpaOut").textContent = cgpa().toFixed(2); tr.closest(".semester").querySelector(".sem-gpa b").textContent = semGPA(state[si]).toFixed(2); };
+    tr.querySelector(".c-grade").onchange = e => { c.grade = e.target.value; document.getElementById("cgpaOut").textContent = cgpa().toFixed(2); tr.closest(".semester").querySelector(".sem-gpa b").textContent = semGPA(state[si]).toFixed(2); };
+    const rm = tr.querySelector(".rm");
+    if(rm) rm.onclick = () => { state[si].courses.splice(ci,1); render(); };
+  });
+}
+
+document.getElementById("addSem").onclick = () => { state.push(newSemester(state.length+1)); render(); };
+document.getElementById("resetAll").onclick = () => { state = [newSemester(1)]; render(); };
+
+render();
+</script>
+</body>
+</html>
