@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>About — CGPA Calculator</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,600;8..60,700&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#F5F6F4; --ink:#151B24; --ink-soft:#4B5563; --rule:#D8DBD6; --gold:#9C7A22;
+    box-sizing:border-box; padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){ --paper:#12161C; --ink:#EDEEEA; --ink-soft:#9CA3AF; --rule:#2A3038; --gold:#D8B65B; }
+  }
+  :root[data-theme="dark"]{ --paper:#12161C; --ink:#EDEEEA; --ink-soft:#9CA3AF; --rule:#2A3038; --gold:#D8B65B; }
+  *{box-sizing:border-box;}
+  html{height:100%; scroll-padding-top:env(safe-area-inset-top,0px);}
+  body{margin:0; min-height:100%; background:var(--paper); color:var(--ink); font-family:"IBM Plex Sans",-apple-system,sans-serif; line-height:1.6;}
+  .wrap{max-width:640px; margin:0 auto; padding:2.5rem 1.25rem 4rem;}
+  h1{font-family:"Source Serif 4",Georgia,serif; font-size:1.6rem; font-weight:600; margin:0 0 1rem;}
+  h2{font-family:"Source Serif 4",Georgia,serif; font-size:1.1rem; font-weight:600; margin:2rem 0 .5rem;}
+  p{color:var(--ink-soft); margin:0 0 1rem;}
+  a{color:var(--gold);}
+  .back{display:inline-block; margin-bottom:2rem; font-size:.85rem; color:var(--ink-soft); text-decoration:none; border-bottom:1px solid var(--rule);}
+  .back:hover{color:var(--gold); border-color:var(--gold);}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="index.html">&larr; Back to calculator</a>
+  <h1>About this tool</h1>
+  <p>This CGPA Calculator helps students work out their semester GPA and cumulative CGPA on a standard 4.0 scale. Add your courses with their credit hours and grades, and the tool totals everything automatically — no manual math, no spreadsheet.</p>
+
+  <h2>How it works</h2>
+  <p>Each course you add contributes quality points equal to its credit hours multiplied by its grade point. Your semester GPA is the total quality points divided by total credit hours for that semester. Your CGPA does the same calculation across every semester you've entered, combined.</p>
+
+  <h2>Privacy</h2>
+  <p>All calculations happen directly in your browser. Nothing you type — course names, grades, or credit hours — is sent anywhere or stored on any server. Closing or refreshing the page clears everything.</p>
+
+  <h2>Contact</h2>
+  <p>Questions or suggestions about the calculator can be sent to the site owner via the contact details on the homepage.</p>
+</div>
+</body>
+</html>
